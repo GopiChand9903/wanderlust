@@ -1,0 +1,54 @@
+<%layout("/layouts/boilerplate.ejs") -%>
+<div class="row">
+  <div class="col-8 offset-2 mt-3">
+<body>
+  <h1>Create A New Listing</h1>
+  <br><br>
+  <!-- When you use listing[<field>] as the name for your input fields, the form submission will group all those inputs into an object (or associative array) with the key listing on the server side. -->
+  <form method ="POST" action="/listings" novalidate class="needs-validation">
+    <div class="mb-3">
+    <label class="form-label" for="title">Title</label>
+    <input name="listing[title]" placeholder="Add a catchy title" type="text" class="form-control" required/>
+    <div class="valid-feedback">Title looks good</div>
+  </div>
+    
+    <div class="mb-3">
+      <label class="form-label" for="desciption">Description</label>
+    <textarea name="listing[description]" class="form-control" required></textarea>
+    <div class="invalid-feedback">Enter a short description</div>
+  </div>
+    
+    <div class="mb-3">
+      <label class="form-label" for="image" >Image Url</label>
+    <input name="listing[image]" placeholder="Enter image Url" class="form-control" type="text">
+    
+  </div>
+    
+    <div class="row">
+    <div class="mb-3 col-md-4">
+      <label class="form-label" for="price" >Price</label>
+    <input name="listing[price]" 
+    
+    class="form-control" required placeholder="1200">
+    <div class="invalid-feedback">Price should be valid</div>
+  </div>
+    
+  <div class="mb-3 col-md-8">
+    <label class="form-label" for="country">Country</label>
+    <input name="listing[country]" class="form-control" type="text" placeholder="India" required>
+    <div class="invalid-feedback">Country name should be valid</div>
+  </div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="location">Location</label>
+    <input name="listing[location]" class="form-control" type="text" required placeholder="Jaipur, Rajasthan">
+    <div class="invalid-feedback">Location should be valid</div>
+  </div>
+  </div>
+    <button class="btn btn-dark add-btn mt-2">ADD</button>
+    <br><br>
+  </form>
+</body>
+</div>
+</div>
+

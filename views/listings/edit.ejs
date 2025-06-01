@@ -1,0 +1,45 @@
+<%layout("/layouts/boilerplate.ejs")%>
+<div class="row mt-3">
+  <div class="col-8 offset-2">
+
+<body>
+  <h1>Edit Your Listing</h1>
+  <form method ="POST" action="/listings/<%=listing._id%>?._method=PUT" novalidate class="needs-validation">
+    <div class="mb-3">
+      <label class="form-label" for="title">Title</label>
+    <input name="listing[title]" value="<%=listing.title%>" type="text" class="form-control" required>
+    <div class="invalid-feedback">Enter a name</div>
+  </div>
+  <div class="mb-3">
+  <label class="form-label" for="desciption" >Description</label>
+    <textarea name="listing[description]" class="form-control" required><%=listing.description%></textarea>
+    <div class="invalid-feedback">Enter a short description</div>
+</div>
+<div class="mb-3">
+  <label class="form-label" for="image" required>Image Url</label>
+    <input name="listing[image]" class="form-control" value="<%=listing.image%>" type="text" required>
+    <div class="invalid-feedback">Image url should be valid</div>
+  </div>
+  <div class="row col-md-4">
+  <div class="mb-3">
+    <label class="form-label" for="price" >Price</label>
+    <input name="listing[price]" class="form-control" required type="number" value="<%=listing.price%>">
+    <div class="invalid-feedback">Price should be valid</div>
+    </div>
+    <div class="mb-3 col-md-8">
+      <label class="form-label" for="country">Country</label>
+    <input name="listing[country]" class="form-control" value="<%=listing.country%>" type="text" required>
+    <div class="invalid-feedback">Country should be valid</div>
+  </div>
+</div>
+    <div class="mb-3">
+      <label class="form-label" for="location">Location</label>
+    <input name="listing[location]" class="form-control" value="<%=listing.location%>" type="text" required>
+    <div class="invalid-feedback">Location should be valid</div>
+    </div></div>
+    <button class="btn btn-dark edit-btn">Edit</button>
+    <br><br>
+  </form>
+</body>
+</div>
+</div>
