@@ -4,18 +4,9 @@ const wrapAsync = require("../utils/wrapAsync.js");
 const ExpressError = require("../utils/ExpressError.js");
 const {listingSchema} = require("../schema.js");//joi listing schema
 const Listing = require("../models/listing.js");//this listing.js consists is a schema. 
-const {isLoggedIn} = require("../middleware.js");
+const {isLoggedIn, isOwner, validateListing} = require("../middleware.js");
 
-const validateListing =(req,res,next)=> {
-  let {error} = listingSchema.validate(req.body);//this validates the request body and returns something and we are extracting error from that
-  // console.log(result);
-  if(error){
-    let errMsg = error.details.map((el) => el.message).join(",");
-    throw new ExpressError(400,errMsg);
-  }else{
-    next();
-  }
-}
+
 
 //INDEX ROUTE
 router.get("/",wrapAsync(async(req,res)=>{
@@ -47,7 +38,11 @@ router.post("/", isLoggedIn, validateListing, wrapAsync(async(req,res,next)=>{
 //SHOW ROUTE
 router.get("/:id", wrapAsync(async(req,res)=>{
   let {id} = req.params;
-  const listing = await Listing.findById(id).populate("reviews").populate("owner");//populate is used here because we need to get the data related to the reviews that are associated with the listing
+  const listing = await Listing.findById(id).populate({path:"reviews", populate:({
+    path: "author",
+  }),}).populate("owner");//populate is used here because we need to get the data related to the reviews that are associated with the listing .. Even though you're storing the owner ID, Mongoose .populate("owner") is needed to replace that ID with the full user document from the User collection.
+
+
   if(!listing){
     req.flash("error", "Listing you requested does not exist");
     res.redirect("/listings");
@@ -57,7 +52,7 @@ router.get("/:id", wrapAsync(async(req,res)=>{
 }));
 
 //EDIT route
-router.get("/:id/edit", isLoggedIn, wrapAsync(async(req,res)=>{
+router.get("/:id/edit", isLoggedIn, isOwner, wrapAsync(async(req,res)=>{
   let {id} = req.params;
   const listing = await Listing.findById(id);
   if(!listing){
@@ -68,15 +63,18 @@ router.get("/:id/edit", isLoggedIn, wrapAsync(async(req,res)=>{
 }));
 
 //UPDATE ROUTE
-router.put("/:id", isLoggedIn, validateListing,wrapAsync(async(req,res)=>{
+router.put("/:id", isLoggedIn, isOwner, validateListing,wrapAsync(async(req,res)=>{
   let {id} = req.params;
+
+  let listing = await Listing.findById(id);
+  
   await Listing.findByIdAndUpdate(id,{...req.body.listing});//this is spreading operator and when we use this we copy the data if req.body.listing into another variable
   req.flash("success", "Listing updated");
   res.redirect(`/listings/${id}`);
 }));
 
 //DELETE ROUTE
-router.delete("/:id", isLoggedIn, wrapAsync(async(req,res)=>{
+router.delete("/:id", isLoggedIn, isOwner, wrapAsync(async(req,res)=>{
   let {id} = req.params;
   let delListing = await Listing.findByIdAndDelete(id);
   //this triggers the middleware written in "models/listing.js"

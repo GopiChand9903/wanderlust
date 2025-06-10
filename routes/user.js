@@ -14,12 +14,13 @@ router.post("/signup", wrapAsync(async (req, res, next) => {
   try{
     let {username, email, password} = req.body;
     let newUser = new User({email, username});
-    let registeredUser = await User.register(newUser, password);
+    let registeredUser = await User.register(newUser, password);//register anedhi it comes from passport
     console.log(registeredUser);
 
-    req.login(registeredUser, (err) => {
+    //the login is invoked by passport.autheticate() automatically.
+    req.login(registeredUser, (err) => {//login also comes from the passport
       if(err){
-        return next(err);
+        return next(err);//it calls the express default error handler
       }
       req.flash("success", "Welcome to Wanderlust");
       res.redirect("/listings");
@@ -35,11 +36,11 @@ router.get("/login", (req, res) => {
 });
 
 // the parameter "local" is the strategy used
-//there is no other logic for the authentication of the user we are using the "passport.authenticate()" method
+//there is no other logic for the authentication of the user, coz we are using the "passport.authenticate()" method
 router.post("/login", 
-  saveRedirectUrl, 
+  saveRedirectUrl, //this saveRedirectUrl is called to know the originalUrl from the req object. Because after login (passport.authenticate() invokes login) the req object resets and all info is lost. To stop that we called this middleware - it is in middleware.js
   passport.authenticate("local",
-  {failureRedirect:"/login",failureFlash: true}),
+  {failureRedirect:"/login",failureFlash: true}),//this authenticate() invokes the req.login() in the /signup route.
   async(req, res) => {
   // res.send("Welcome to WanderLust, You are logged in");
   req.flash("success", "You are logged in succesfully to Wanderlust");
