@@ -6,29 +6,25 @@ const {listingSchema} = require("../schema.js");//joi listing schema
 const Listing = require("../models/listing.js");//this listing.js consists is a schema. 
 const {isLoggedIn, isOwner, validateListing} = require("../middleware.js");
 const listingController = require("../controllers/listings.js");
+const multer  = require('multer')
+const upload = multer({ dest: 'uploads/' })
 
-
-
-//INDEX ROUTE
-router.get("/",wrapAsync(listingController.index));
+router
+.route("/")
+.get(wrapAsync(listingController.index))//Index route
+.post(isLoggedIn, validateListing, wrapAsync(listingController.createListing));//create route
 
 //new route ===== we kept it above show route coz new is percieved as id of show route and show is searching for it. so we kept it above the show route//
 router.get("/new", isLoggedIn, listingController.renderNewForm);
 
-//create route
-router.post("/", isLoggedIn, validateListing, wrapAsync(listingController.createListing));
+router
+.route("/:id")
+.get(wrapAsync(listingController.showListing))//show route
+.put(isLoggedIn, isOwner, validateListing,wrapAsync(listingController.updateListing))//update route
+.delete(isLoggedIn, isOwner, wrapAsync(listingController.destroyListing))//delete route
 
-//SHOW ROUTE
-router.get("/:id", wrapAsync(listingController.showListing));
-
-//EDIT route
-router.get("/:id/edit", isLoggedIn, isOwner, wrapAsync(listingController.renderEditForm));
-
-//UPDATE ROUTE
-router.put("/:id", isLoggedIn, isOwner, validateListing,wrapAsync(listingController.updateListing));
-
-//DELETE ROUTE
-router.delete("/:id", isLoggedIn, isOwner, wrapAsync(listingController.destroyListing));
+//edit route
+router.get("/:id/edit", isLoggedIn, isOwner, wrapAsync(listingController.renderEditForm))
 
 module.exports = router;
 

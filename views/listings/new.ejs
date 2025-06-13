@@ -5,7 +5,7 @@
   <h1>Create A New Listing</h1>
   <br><br>
   <!-- When you use listing[<field>] as the name for your input fields, the form submission will group all those inputs into an object (or associative array) with the key listing on the server side. -->
-  <form method ="POST" action="/listings" novalidate class="needs-validation">
+  <form method ="POST" action="/listings" novalidate class="needs-validation" enctype="multipart/form-data">
     <div class="mb-3">
     <label class="form-label" for="title">Title</label>
     <input name="listing[title]" placeholder="Add a catchy title" type="text" class="form-control" required/>
@@ -18,10 +18,15 @@
     <div class="invalid-feedback">Enter a short description</div>
   </div>
     
-    <div class="mb-3">
+    <!-- <div class="mb-3">
       <label class="form-label" for="image" >Image Url</label>
     <input name="listing[image]" placeholder="Enter image Url" class="form-control" type="text">
     
+  </div> -->
+
+    <div class="mb-3">
+      <label class="form-label" for="image" >Upload Image</label>
+    <input name="listing[image]" class="form-control" type="file">   
   </div>
     
     <div class="row">

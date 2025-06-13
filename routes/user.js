@@ -4,58 +4,23 @@ const User = require("../models/user.js");
 const wrapAsync = require("../utils/wrapAsync");
 const passport = require("passport");
 const {saveRedirectUrl} = require("../middleware.js");
+const userController = require("../controllers/users.js");
 
-router.get("/signup", (req, res) => {
-  res.render("users/signup.ejs");
-});
+router
+.route("/signup")
+.get(userController.renderSignupForm)
+.post(wrapAsync(userController.signup));
 
-// The below one is async request as we are changing things in the data base.
-router.post("/signup", wrapAsync(async (req, res, next) => {
-  try{
-    let {username, email, password} = req.body;
-    let newUser = new User({email, username});
-    let registeredUser = await User.register(newUser, password);//register anedhi it comes from passport
-    console.log(registeredUser);
-
-    //the login is invoked by passport.autheticate() automatically.
-    req.login(registeredUser, (err) => {//login also comes from the passport
-      if(err){
-        return next(err);//it calls the express default error handler
-      }
-      req.flash("success", "Welcome to Wanderlust");
-      res.redirect("/listings");
-    });
-  } catch(e){
-    req.flash("error", e.message);
-    res.redirect("/signup");//we wrote this because the error msg is displayed in random page. So, we catched the error, flash it and then redirect it to /signup.
-  }
-}));
-
-router.get("/login", (req, res) => {
-  res.render("users/login.ejs");
-});
-
-// the parameter "local" is the strategy used
-//there is no other logic for the authentication of the user, coz we are using the "passport.authenticate()" method
-router.post("/login", 
+router
+.route("/login")
+.get(userController.renderLoginForm)
+.post(
   saveRedirectUrl, //this saveRedirectUrl is called to know the originalUrl from the req object. Because after login (passport.authenticate() invokes login) the req object resets and all info is lost. To stop that we called this middleware - it is in middleware.js
   passport.authenticate("local",
   {failureRedirect:"/login",failureFlash: true}),//this authenticate() invokes the req.login() in the /signup route.
-  async(req, res) => {
-  // res.send("Welcome to WanderLust, You are logged in");
-  req.flash("success", "You are logged in succesfully to Wanderlust");
-  let redirectUrl = res.locals.redirectUrl || "/listings"; //we wrote this coz the res.locals.redirectUrl only present if there is an originalUrl, but when we dont go on a path like /edit, /new, /delete.., the originalUrl is empty and our basic thing is give them convinience so we just redirects it to "/listings".
-  res.redirect(redirectUrl);
-});
+  userController.login);// the parameter "local" is the strategy used
+//there is no other logic required for the authentication of the user, coz we are using the "passport.authenticate()" method
 
-router.get("/logout", (req, res, next) => {
-  req.logout((err) => {
-    if(err){
-      return next(err);
-    }
-    req.flash("success", "You are logged out successfully!");
-    res.redirect("/listings");
-  })
-})
+router.get("/logout", userController.logout)
 
 module.exports = router;
