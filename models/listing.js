@@ -14,9 +14,8 @@ const listingSchema = new Schema({//(1)
     required:true
   },
   image:{
-    type:String,
-    default:"https://www.fodors.com/wp-content/uploads/2019/05/02_20BestBeachesFlorida__FortLauderdaleBeach_shutterstock_679585456.jpg",
-    set:v=>v===""?"https://www.fodors.com/wp-content/uploads/2019/05/02_20BestBeachesFlorida__FortLauderdaleBeach_shutterstock_679585456.jpg":v,
+    url: String,
+    filename: String,
   },
   price:{
     type:Number,
