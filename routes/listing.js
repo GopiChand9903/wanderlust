@@ -8,6 +8,7 @@ const {isLoggedIn, isOwner, validateListing} = require("../middleware.js");
 const listingController = require("../controllers/listings.js");
 const multer  = require('multer')
 const {storage} = require("../cloudConfig.js"); 
+
 const upload = multer({storage})
 
 router
@@ -15,8 +16,8 @@ router
 .get(wrapAsync(listingController.index))//Index route
 .post(
   isLoggedIn, 
-  upload.single("listing[image]"), //multer process chestadi and then it sends to cloudinary
-  validateListing, 
+  upload.single("listing[image]"), //multer process chestadi and then it sends to cloudinary 
+  validateListing, //from here the control goes to controllers> listings.js> createListing
   wrapAsync(listingController.createListing));//create route
 
 //new route ===== we kept it above show route coz new is percieved as id of show route and show is searching for it. so we kept it above the show route//
@@ -25,7 +26,7 @@ router.get("/new", isLoggedIn, listingController.renderNewForm);
 router
 .route("/:id")
 .get(wrapAsync(listingController.showListing))//show route
-.put(isLoggedIn, isOwner, validateListing,wrapAsync(listingController.updateListing))//update route
+.put(isLoggedIn, isOwner, upload.single("listing[image]"), validateListing, wrapAsync(listingController.updateListing))//update route
 .delete(isLoggedIn, isOwner, wrapAsync(listingController.destroyListing))//delete route
 
 //edit route
