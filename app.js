@@ -60,9 +60,9 @@ app.listen(port,()=>{
 });
 
 
-app.get("/",(req,res)=>{
-  res.send("Hey, I am root");
-});
+// app.get("/",(req,res)=>{
+//   res.send("Hey, I am root");
+// });
 
 
 
