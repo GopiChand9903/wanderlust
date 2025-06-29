@@ -23,8 +23,11 @@ const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
 
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 const port = 9903;
+
+const dbUrl = process.env.ATLASDB_URL;
 
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"views"));
@@ -33,8 +36,21 @@ app.use(methodOverride("._method"));
 app.engine("ejs",ejsMate);
 app.use(express.static(path.join(__dirname,"/public")));
 
+const store = MongoStore.create({
+  mongoUrl: dbUrl,
+  crypto:{
+    secret: process.env.SECRET,
+  },
+  touchAfter: 24 * 60 * 60,
+});
+
+store.on("error", ()=>{
+  console.log("ERROR in MONGO SESSION STORE", err);
+})
+
 const sessionOptions = {
-  secret : "mysupersecretcode",
+  store, 
+  secret : process.env.SECRET,
   resave: false,
   saveUninitialized: false,
   cookie:{
@@ -46,13 +62,14 @@ const sessionOptions = {
 };
 
 
+
 main().then(()=>{//this is function call for the main() function below this
   console.log("Connected to wanderlust");
 })
 .catch((err)=>{console.log("Not connected wanderlust");});
 
 async function main(){
-  await mongoose.connect("mongodb://127.0.0.1:27017/wanderlust");
+  await mongoose.connect(dbUrl);
 }
 
 app.listen(port,()=>{
