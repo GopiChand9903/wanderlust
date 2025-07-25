@@ -8,12 +8,12 @@ main().then(()=>{
 .catch((err)=>{console.log("Not connected wanderlust");});
 
 async function main(){
-  await mongoose.connect("mongodb://127.0.0.1:27017/wanderlust");
+  await mongoose.connect("mongodb+srv://gopichandsudhati:Peeqvegs9ziKPEnM@cluster0.z3gp0m0.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0");
 }
 
 const initDB = async()=>{
   await Listing.deleteMany({});
-  initData.data = initData.data.map((obj) => ({...obj, owner: '6839a1bd0813864f9e5e9151'}));
+  initData.data = initData.data.map((obj) => ({...obj, owner: '6860bf8a20667309df1bb0c7', geometry:{ type: "Point", coordinates: [78.312,15.324] }}));
   await Listing.insertMany(initData.data);
   console.log("data was initialized");
 }
