@@ -10,6 +10,6 @@ const userSchema = new Schema({
   }
 });
 
-userSchema.plugin(passportLocalMongoose);//In userSchema we are not giving username because passport-local-mongoose can create its own username and hash, slat the password and then store it. The hashed password and the salt value are also stored.
+userSchema.plugin(passportLocalMongoose);//In userSchema we are not giving username because passport-local-mongoose can create its own username and hash, salt the password and then store it. The hashed password and the salt value are also stored.
 
 module.exports = mongoose.model('User', userSchema);

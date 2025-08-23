@@ -88,7 +88,7 @@ app.use(flash());
 
 
 
-//The next lines are for authentication - every line had passport written init in oneplace or the other
+//The next lines are for authentication - every line had passport written in it in oneplace or the other
 //The passport uses "session", so we need to write the passport intialize under the session middleware
 app.use(passport.initialize());
 app.use(passport.session());//gives the ability to identify users when navigating through different pages. 
